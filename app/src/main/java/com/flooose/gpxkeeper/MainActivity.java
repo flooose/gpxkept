@@ -6,7 +6,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,16 +14,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import org.apache.oltu.oauth2.client.OAuthClient;
+import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
+import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
 import org.apache.oltu.oauth2.common.OAuth;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.apache.oltu.oauth2.common.message.types.GrantType;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import javax.net.ssl.HttpsURLConnection;
 import java.net.URL;
 
 
@@ -34,6 +38,7 @@ public class MainActivity extends ActionBarActivity {
     public static final String TOKEN_URL = "https://runkeeper.com/apps/token";
     public static final String DE_AUTHORIZE_URL = "https://runkeeper.com/apps/de-authorize";
     public static final String DEBUG_TAG = "GPXKEEPER";
+    public static final String GPX_KEEPER_URI = "gpxkeeper://oauthresponse";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,14 +105,6 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-        Reader reader = null;
-        reader = new InputStreamReader(stream, "UTF-8");
-        char[] buffer = new char[len];
-        reader.read(buffer);
-        return new String(buffer);
-    }
-
     private String downloadUrl(String myurl) throws IOException {
         InputStream is = null;
         // Only display the first 500 characters of the retrieved
@@ -119,7 +116,7 @@ public class MainActivity extends ActionBarActivity {
             OAuthClientRequest.AuthenticationRequestBuilder requestBuilder = OAuthClientRequest.authorizationLocation(MainActivity.AUTHORIZATION_URL);
             requestBuilder.setClientId(GPXKeeperOAuthData.ClientID);
             requestBuilder.setResponseType("code");
-            requestBuilder.setRedirectURI("gpxkeeper://oauthresponse");
+            requestBuilder.setRedirectURI(GPX_KEEPER_URI);
             OAuthClientRequest request = requestBuilder.buildQueryMessage();
             URL url = new URL(request.getLocationUri());
             Intent authenticate = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getLocationUri()));
@@ -193,13 +190,73 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onNewIntent(Intent intent){
         super.onNewIntent(intent);
+        String token = null;
+
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            new DownloadToken(intent).execute(MainActivity.AUTHORIZATION_URL);
+        } else {
+            //textView.setText("No network connection available.");
+        }
+
+
+
+        //uri.toString();
+    }
+
+    public String validateToken(Intent intent) {
+        // Gets the URL from the UI's text field.
+        //String stringUrl = urlText.getText().toString();
         int blub = 2;
         //Uri uri = intent.getData();
         int bla = blub + 1;
         OAuthClientRequest request = null;
+        String authCode = Uri.parse(((Intent) intent).getDataString()).getQueryParameter("code");
+        try {
+            request = OAuthClientRequest.tokenLocation(TOKEN_URL).
+                    setClientId(GPXKeeperOAuthData.ClientID).
+                    setGrantType(GrantType.AUTHORIZATION_CODE).
+                    setClientSecret(GPXKeeperOAuthData.CLIENT_SECRET).
+                    setRedirectURI(GPX_KEEPER_URI).
+                    setCode(authCode).
+                    buildBodyMessage();
+        } catch (OAuthSystemException e) {
+            e.printStackTrace();
+        }
+        OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
+        OAuthJSONAccessTokenResponse response = null;
+        try {
+            response = oAuthClient.accessToken(request);
+        } catch (OAuthSystemException e) {
+            e.printStackTrace();
+        } catch (OAuthProblemException e) {
+            e.printStackTrace();
+        } finally {
+            int vlub = 2;
+        }
+        String token = response.getAccessToken();
+        return token;
+    }
 
-//request = OAuthClientRequest.tokenLocation();
-        //uri.toString();
+    private class DownloadToken extends AsyncTask<String, Void, String> {
+        private Intent intent;
+        public DownloadToken(Intent intent){
+
+            this.intent = intent;
+
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return validateToken(intent);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(String result) {
+            //textView.setText(result);
+        }
     }
 }
 
