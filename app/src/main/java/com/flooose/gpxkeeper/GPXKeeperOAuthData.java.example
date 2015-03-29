@@ -1,0 +1,8 @@
+package com.flooose.gpxkeeper;
+
+/**
+ * Created by chris on 22.03.15.
+ */
+public class GPXKeeperOAuthData {
+    public static final String ClientID = "abc123";
+}
