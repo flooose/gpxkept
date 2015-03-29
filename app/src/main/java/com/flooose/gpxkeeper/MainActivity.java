@@ -1,10 +1,13 @@
 package com.flooose.gpxkeeper;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -121,22 +124,6 @@ public class MainActivity extends ActionBarActivity {
             URL url = new URL(request.getLocationUri());
             Intent authenticate = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getLocationUri()));
             startActivityForResult(authenticate, 0);
-            //HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-            //conn.setReadTimeout(10000 /* milliseconds */);
-            //conn.setConnectTimeout(15000 /* milliseconds */);
-            //conn.setRequestMethod("GET");
-            //conn.setDoInput(true);
-            // Starts the query
-            //int response = conn.getResponseCode();
-            //is = conn.getInputStream();
-
-
-            // Convert the InputStream into a string
-            //contentAsString = readIt(is, len);
-            //Log.d(DEBUG_TAG, contentAsString);
-
-            // Makes sure that the InputStream is closed after the app is
-            // finished using it.
         } catch (OAuthSystemException e) {
             e.printStackTrace();
         } finally {
@@ -190,7 +177,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onNewIntent(Intent intent){
         super.onNewIntent(intent);
-        String token = null;
 
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
@@ -237,6 +223,10 @@ public class MainActivity extends ActionBarActivity {
             int vlub = 2;
         }
         String token = response.getAccessToken();
+        SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor e = p.edit();
+        e.putString("oauth_token", token);
+        e.commit();
         return token;
     }
 

@@ -4,5 +4,7 @@
     <string name="app_name">gpxkeeper</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="pref_oauth_token">Oauth token</string>
+    <string name="pref_oauth_token_summ">FIGURE OUT HOW TO GET THE OAUTH TOKEN IN HERE</string>
 
 </resources>
