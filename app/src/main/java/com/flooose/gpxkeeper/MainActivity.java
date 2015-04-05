@@ -101,11 +101,8 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private String downloadUrl(String myurl) throws IOException {
+    private String downloadUrl() throws IOException { // we can probably return null
         InputStream is = null;
-        // Only display the first 500 characters of the retrieved
-        // web page content.
-        int len = 1000;
         String contentAsString = "";
 
         try {
@@ -135,10 +132,8 @@ public class MainActivity extends ActionBarActivity {
      private class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
-
-            // params comes from the execute() call: params[0] is the url.
             try {
-                return downloadUrl(urls[0]);
+                return downloadUrl();
             } catch (IOException e) {
                 return "Unable to retrieve web page. URL may be invalid.";
             }
