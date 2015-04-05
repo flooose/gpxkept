@@ -88,7 +88,7 @@ public class MainActivity extends ActionBarActivity {
 
     // When user clicks button, calls AsyncTask.
     // Before attempting to fetch the URL, makes sure that there is a network connection.
-    public void network(View view) {
+    public void oAuthenticate(View view) {
         // Gets the URL from the UI's text field.
         //String stringUrl = urlText.getText().toString();
         ConnectivityManager connMgr = (ConnectivityManager)
