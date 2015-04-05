@@ -26,8 +26,6 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 
 import java.io.IOException;
 import java.io.InputStream;
-import ca.carleton.gcrc.gpx.*;
-import java.net.URL;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -116,7 +114,6 @@ public class MainActivity extends ActionBarActivity {
             requestBuilder.setResponseType("code");
             requestBuilder.setRedirectURI(GPX_KEEPER_URI);
             OAuthClientRequest request = requestBuilder.buildQueryMessage();
-            URL url = new URL(request.getLocationUri());
             Intent authenticate = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getLocationUri()));
             startActivityForResult(authenticate, 0);
         } catch (OAuthSystemException e) {
