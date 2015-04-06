@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
@@ -24,6 +27,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -45,8 +49,9 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
-    }
 
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -82,6 +87,17 @@ public class MainActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            String oauth_token = PreferenceManager.getDefaultSharedPreferences(this.getActivity()).getString("oauth_token", "");
+            if(oauth_token.length() > 0) {
+                GPXFiles gpxFiles = new GPXFiles(new File(Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()));
+
+                ArrayAdapter<File> fileArrayAdapter = new ArrayAdapter<File>(this.getActivity(),
+                        R.layout.gpx_file_entry_layout, R.id.gpx_file_name, gpxFiles.files());
+
+                ListView fileListView = (ListView) rootView.findViewById(R.id.gpx_file_list_view);
+                fileListView.setAdapter(fileArrayAdapter);
+            }
             return rootView;
         }
     }
@@ -148,18 +164,10 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        int blub = 2;
-        int bla = blub *1;
-
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int responseCode, Intent intent){
-        int blub = 2;
-        //Uri uri = intent.getData();
-        int bla = blub + 1;
-        //uri.toString();
-    }
+    protected void onActivityResult(int requestCode, int responseCode, Intent intent){}
 
     @Override
     protected void onNewIntent(Intent intent){
@@ -173,18 +181,10 @@ public class MainActivity extends ActionBarActivity {
         } else {
             //textView.setText("No network connection available.");
         }
-
-
-
-        //uri.toString();
     }
 
     public String validateToken(Intent intent) {
         // Gets the URL from the UI's text field.
-        //String stringUrl = urlText.getText().toString();
-        int blub = 2;
-        //Uri uri = intent.getData();
-        int bla = blub + 1;
         OAuthClientRequest request = null;
         String authCode = Uri.parse(((Intent) intent).getDataString()).getQueryParameter("code");
         try {
@@ -207,8 +207,8 @@ public class MainActivity extends ActionBarActivity {
         } catch (OAuthProblemException e) {
             e.printStackTrace();
         } finally {
-            int vlub = 2;
         }
+
         String token = response.getAccessToken();
         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor e = p.edit();
