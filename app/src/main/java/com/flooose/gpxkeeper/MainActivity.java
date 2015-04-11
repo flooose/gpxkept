@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -49,8 +50,6 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
-
-
     }
 
     @Override
@@ -80,15 +79,20 @@ public class MainActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
-        public PlaceholderFragment() {
+        public PlaceholderFragment() {}
+
+        private String getOauthToken(){
+            return PreferenceManager.getDefaultSharedPreferences(this.getActivity()).getString("oauth_token", "");
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater,
+                                 ViewGroup container,
+                                 Bundle savedInstanceState)
+        {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            String oauth_token = PreferenceManager.getDefaultSharedPreferences(this.getActivity()).getString("oauth_token", "");
-            if(oauth_token.length() > 0) {
+
+            if(getOauthToken().length() > 0) {
                 GPXFiles gpxFiles = new GPXFiles(new File(Environment
                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()));
 
@@ -97,6 +101,24 @@ public class MainActivity extends ActionBarActivity {
 
                 ListView fileListView = (ListView) rootView.findViewById(R.id.gpx_file_list_view);
                 fileListView.setAdapter(fileArrayAdapter);
+                fileListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                        RunKeeperRequest runKeeperRequest = new RunKeeperRequest(getOauthToken(),
+                                getActivity().getApplicationContext());
+
+                        try {
+                            runKeeperRequest.send(getActivity());
+                            return true;
+                        } catch (OAuthSystemException e) {
+                            e.printStackTrace();
+                            return false;
+                        } catch (OAuthProblemException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    }
+                });
             }
             return rootView;
         }
@@ -123,7 +145,7 @@ public class MainActivity extends ActionBarActivity {
 
         try {
             OAuthClientRequest.AuthenticationRequestBuilder requestBuilder = OAuthClientRequest.authorizationLocation(MainActivity.AUTHORIZATION_URL);
-            requestBuilder.setClientId(GPXKeeperOAuthData.ClientID);
+            requestBuilder.setClientId(GPXKeeperOAuthData.CLIENT_ID);
             requestBuilder.setResponseType("code");
             requestBuilder.setRedirectURI(GPX_KEEPER_URI);
             OAuthClientRequest request = requestBuilder.buildQueryMessage();
@@ -189,7 +211,7 @@ public class MainActivity extends ActionBarActivity {
         String authCode = Uri.parse(((Intent) intent).getDataString()).getQueryParameter("code");
         try {
             request = OAuthClientRequest.tokenLocation(TOKEN_URL).
-                    setClientId(GPXKeeperOAuthData.ClientID).
+                    setClientId(GPXKeeperOAuthData.CLIENT_ID).
                     setGrantType(GrantType.AUTHORIZATION_CODE).
                     setClientSecret(GPXKeeperOAuthData.CLIENT_SECRET).
                     setRedirectURI(GPX_KEEPER_URI).
