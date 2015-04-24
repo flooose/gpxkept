@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:key="pref_oath_token"
+        android:title="@string/pref_oauth_token"
+        android:summary="@string/pref_oauth_token_summ"
+        android:defaultValue="true" /> <!-- See "Using intents" at http://developer.android.com/guide/topics/ui/settings.html to see how you might use oauth-deactivate link -->
+</PreferenceScreen>

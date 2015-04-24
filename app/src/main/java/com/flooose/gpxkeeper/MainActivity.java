@@ -27,8 +27,10 @@ import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -108,12 +110,23 @@ public class MainActivity extends ActionBarActivity {
                                 getActivity().getApplicationContext());
 
                         try {
-                            runKeeperRequest.send(getActivity());
+                            GPXFile gpxFile = new GPXFile(parent.getItemAtPosition(position).toString());
+                            String gpxJSON = gpxFile.toJSON();
+                            runKeeperRequest.send(getActivity(), gpxJSON);
                             return true;
                         } catch (OAuthSystemException e) {
                             e.printStackTrace();
                             return false;
                         } catch (OAuthProblemException e) {
+                            e.printStackTrace();
+                            return false;
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                            return false;
+                        } catch (XmlPullParserException e) {
+                            e.printStackTrace();
+                            return false;
+                        } catch (IOException e) {
                             e.printStackTrace();
                             return false;
                         }
