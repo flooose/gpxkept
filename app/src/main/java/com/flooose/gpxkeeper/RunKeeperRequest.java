@@ -1,12 +1,10 @@
 package com.flooose.gpxkeeper;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.widget.Toast;
 
 import org.apache.oltu.oauth2.client.OAuthClient;
@@ -18,7 +16,6 @@ import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
-import javax.crypto.spec.OAEPParameterSpec;
 
 /**
  * Created by chris on 06.04.15.
