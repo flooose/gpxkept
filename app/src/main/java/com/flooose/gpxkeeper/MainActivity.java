@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import org.apache.oltu.oauth2.client.OAuthClient;
@@ -76,12 +77,29 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public boolean oAuthenticated() {
+        return PreferenceManager.getDefaultSharedPreferences(this).getString("oauth_token", null) != null;
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
 
         public PlaceholderFragment() {}
+
+        private void setButtonText(View rootView){
+            Button button = (Button) rootView.findViewById(R.id.oAuthButton);
+            if(oAuthenticated()){
+                button.setText(R.string.deauthenticate);
+            } else {
+                button.setText(R.string.setup);
+            }
+        }
+
+        public boolean oAuthenticated() {
+            return PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("oauth_token", null) != null;
+        }
 
         private String getOauthToken(){
             return PreferenceManager.getDefaultSharedPreferences(this.getActivity()).getString("oauth_token", "");
@@ -94,7 +112,9 @@ public class MainActivity extends ActionBarActivity {
         {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-            if(getOauthToken().length() > 0) {
+            //setButtonText(rootView);
+
+            if(oAuthenticated()) {
                 GPXFiles gpxFiles = new GPXFiles(new File(Environment
                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()));
 
@@ -139,16 +159,18 @@ public class MainActivity extends ActionBarActivity {
 
     // When user clicks button, calls AsyncTask.
     // Before attempting to fetch the URL, makes sure that there is a network connection.
-    public void oAuthenticate(View view) {
-        // Gets the URL from the UI's text field.
-        //String stringUrl = urlText.getText().toString();
-        ConnectivityManager connMgr = (ConnectivityManager)
-            getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            new DownloadWebpageTask().execute(MainActivity.AUTHORIZATION_URL);
+    public void oAuthAction(View view) {
+        if (!oAuthenticated()) {
+            ConnectivityManager connMgr = (ConnectivityManager)
+                    getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+                new DownloadWebpageTask().execute(MainActivity.AUTHORIZATION_URL);
+            } else {
+                //textView.setText("No network connection available.");
+            }
         } else {
-            //textView.setText("No network connection available.");
+
         }
     }
 

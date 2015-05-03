@@ -6,5 +6,6 @@
     <string name="pref_oauth_token">Oauth token</string>
     <string name="pref_oauth_token_summ">FIGURE OUT HOW TO GET THE OAUTH TOKEN IN HERE</string>
     <string name="setup">Setup</string>
+    <string name="deauthenticate">Deauthenticate</string>
 
 </resources>

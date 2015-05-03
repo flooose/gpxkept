@@ -8,10 +8,11 @@
     android:orientation="vertical">
 
     <Button
+        android:id="@+id/oAuthButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/setup"
-        android:onClick="oAuthenticate"/>
+        android:onClick="oAuthAction"/>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
