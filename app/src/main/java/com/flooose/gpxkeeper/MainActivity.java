@@ -44,16 +44,37 @@ public class MainActivity extends ActionBarActivity {
     public static final String DEBUG_TAG = "GPXKEEPER";
     public static final String GPX_KEEPER_URI = "gpxkeeper://oauthresponse";
 
+    private PlaceholderFragment placementholderFragment;
+    private GPXFiles gpxFiles;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        gpxFiles = new GPXFiles(Environment
+                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
+
+        ArrayAdapter fileArrayAdapter = new ArrayAdapter<File>(this,
+                R.layout.gpx_file_entry_layout, R.id.gpx_file_name, gpxFiles.files());
+
+        placementholderFragment = new PlaceholderFragment(fileArrayAdapter);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, placementholderFragment)
                     .commit();
         }
     }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        ArrayAdapter fileArrayAdapter = new ArrayAdapter<File>(this,
+                R.layout.gpx_file_entry_layout, R.id.gpx_file_name, gpxFiles.files());
+
+        placementholderFragment.setFileArrayAdapter(fileArrayAdapter);
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -85,8 +106,16 @@ public class MainActivity extends ActionBarActivity {
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
+        private ArrayAdapter<File> fileArrayAdapter;
+        private ListView fileListView;
 
-        public PlaceholderFragment() {}
+        public PlaceholderFragment(ArrayAdapter<File> fileArrayAdapter) {
+            this.fileArrayAdapter = fileArrayAdapter;
+        }
+
+        public void setFileArrayAdapter(ArrayAdapter<File> fileArrayAdapter){
+            fileListView.setAdapter(fileArrayAdapter);
+        }
 
         private void setButtonText(View rootView){
             Button button = (Button) rootView.findViewById(R.id.oAuthButton);
@@ -115,13 +144,8 @@ public class MainActivity extends ActionBarActivity {
             //setButtonText(rootView);
 
             if(oAuthenticated()) {
-                GPXFiles gpxFiles = new GPXFiles(Environment
-                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
 
-                ArrayAdapter<File> fileArrayAdapter = new ArrayAdapter<File>(this.getActivity(),
-                        R.layout.gpx_file_entry_layout, R.id.gpx_file_name, gpxFiles.files());
-
-                ListView fileListView = (ListView) rootView.findViewById(R.id.gpx_file_list_view);
+                fileListView = (ListView) rootView.findViewById(R.id.gpx_file_list_view);
                 fileListView.setAdapter(fileArrayAdapter);
                 fileListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                     @Override
@@ -216,11 +240,6 @@ public class MainActivity extends ActionBarActivity {
         protected void onPostExecute(String result) {
             //textView.setText(result);
        }
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
     }
 
     @Override
