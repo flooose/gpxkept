@@ -115,8 +115,8 @@ public class MainActivity extends ActionBarActivity {
             //setButtonText(rootView);
 
             if(oAuthenticated()) {
-                GPXFiles gpxFiles = new GPXFiles(new File(Environment
-                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()));
+                GPXFiles gpxFiles = new GPXFiles(Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
 
                 ArrayAdapter<File> fileArrayAdapter = new ArrayAdapter<File>(this.getActivity(),
                         R.layout.gpx_file_entry_layout, R.id.gpx_file_name, gpxFiles.files());
