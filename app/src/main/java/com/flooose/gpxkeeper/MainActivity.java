@@ -50,8 +50,7 @@ public class MainActivity extends ActionBarActivity {
         gpxFiles = new GPXFiles(Environment
                 .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
 
-        ArrayAdapter fileArrayAdapter = new ArrayAdapter<File>(this,
-                R.layout.gpx_file_entry_layout, R.id.gpx_file_name, gpxFiles.files());
+        GPXFilesAdapter fileArrayAdapter = new GPXFilesAdapter(this, gpxFiles.files());
 
         placementholderFragment = new PlaceholderFragment(fileArrayAdapter);
         super.onCreate(savedInstanceState);
@@ -66,8 +65,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        ArrayAdapter fileArrayAdapter = new ArrayAdapter<File>(this,
-                R.layout.gpx_file_entry_layout, R.id.gpx_file_name, gpxFiles.files());
+        GPXFilesAdapter fileArrayAdapter = new GPXFilesAdapter(this, gpxFiles.files());
 
         placementholderFragment.setFileArrayAdapter(fileArrayAdapter);
     }

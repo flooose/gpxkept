@@ -7,7 +7,6 @@ import static org.mockito.Mockito.*;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.Arrays;
 
 import static android.os.Environment.*;
 
@@ -44,8 +43,8 @@ public class GPXFilesTest extends AndroidTestCase {
     public void testReturnsGPXFilesInTheDownloadDirectory(){
         GPXFiles gpxFiles = new GPXFiles(downloadDir);
 
-        assertTrue(Arrays.asList(gpxFiles.files()).contains(gpxFile));
-        assertFalse(Arrays.asList(gpxFiles.files()).contains(nonGPXFile));
+        assert(gpxFiles.files().contains(gpxFile));
+        assertFalse(gpxFiles.files().contains(nonGPXFile));
     }
 
     public void testReturnsGPXFilesOrderedFromNewestToOldest(){
@@ -64,9 +63,9 @@ public class GPXFilesTest extends AndroidTestCase {
 
         GPXFiles gpxFiles = new GPXFiles(downloadDir);
 
-        assertTrue(gpxFiles.files()[0].equals(gpxFile));
+        assertTrue(gpxFiles.files().get(0).equals(gpxFile));
 
         when(anotherGPXFile.lastModified()).thenReturn(new Long(20));
-        assertTrue(gpxFiles.files()[0].equals(anotherGPXFile));
+        assertTrue(gpxFiles.files().get(0).equals(anotherGPXFile));
     }
 }

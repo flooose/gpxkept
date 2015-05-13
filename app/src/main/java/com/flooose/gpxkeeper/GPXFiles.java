@@ -2,6 +2,7 @@ package com.flooose.gpxkeeper;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -20,7 +21,7 @@ public class GPXFiles {
     }
 
     @Inject
-    public File[] files(){
+    public java.util.ArrayList<File> files(){
         FileFilter gpxFilter = new FileFilter(){
             public boolean accept(File pathname) {
                 String[] components = pathname.toString().split("\\.");
@@ -33,7 +34,7 @@ public class GPXFiles {
                 return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
             }
         });
-        return files;
+        return new ArrayList<File>(Arrays.asList(files));
     }
 }
 
