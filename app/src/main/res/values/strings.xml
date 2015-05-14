@@ -8,4 +8,8 @@
     <string name="setup">Setup</string>
     <string name="deauthenticate">Deauthenticate</string>
 
+    <!-- GPXUploadDialog -->
+    <string name="post_activity">Post Activity</string>
+    <string name="cancel">Cancel</string>
+
 </resources>

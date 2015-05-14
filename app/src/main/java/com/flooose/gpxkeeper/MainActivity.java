@@ -28,10 +28,8 @@ import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
-import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -144,36 +142,13 @@ public class MainActivity extends ActionBarActivity {
             //setButtonText(rootView);
 
             if(oAuthenticated()) {
-
                 fileListView = (ListView) rootView.findViewById(R.id.gpx_file_list_view);
                 fileListView.setAdapter(fileArrayAdapter);
-                fileListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                fileListView.setOnItemClickListener(new ListView.OnItemClickListener(){
                     @Override
-                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                        RunKeeperRequest runKeeperRequest = new RunKeeperRequest(getOauthToken(),
-                                getActivity().getApplicationContext());
-
-                        try {
-                            GPXFile gpxFile = new GPXFile(parent.getItemAtPosition(position).toString());
-                            String gpxJSON = gpxFile.toJSON();
-                            runKeeperRequest.send(getActivity(), gpxJSON);
-                            return true;
-                        } catch (OAuthSystemException e) {
-                            e.printStackTrace();
-                            return false;
-                        } catch (OAuthProblemException e) {
-                            e.printStackTrace();
-                            return false;
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                            return false;
-                        } catch (XmlPullParserException e) {
-                            e.printStackTrace();
-                            return false;
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return false;
-                        }
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        GPXUploadDialog gpxUploadDialog = new GPXUploadDialog((File) adapterView.getItemAtPosition(i));
+                        gpxUploadDialog.show(getActivity().getFragmentManager(), "hello");
                     }
                 });
             }
