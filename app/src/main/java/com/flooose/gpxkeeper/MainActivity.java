@@ -248,11 +248,12 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onNewIntent(Intent intent){
         super.onNewIntent(intent);
+        boolean authingApp = intent.getDataString() != null;
 
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if (networkInfo != null && networkInfo.isConnected() && authingApp) {
             new DownloadToken(intent).execute(MainActivity.AUTHORIZATION_URL);
         } else {
             //textView.setText("No network connection available.");
