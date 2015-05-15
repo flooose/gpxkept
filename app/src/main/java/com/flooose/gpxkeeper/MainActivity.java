@@ -30,6 +30,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -145,7 +146,12 @@ public class MainActivity extends ActionBarActivity {
                 fileListView.setOnItemClickListener(new ListView.OnItemClickListener(){
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        GPXUploadDialog gpxUploadDialog = new GPXUploadDialog((File) adapterView.getItemAtPosition(i));
+                        GPXUploadDialog gpxUploadDialog = null;
+                        try {
+                            gpxUploadDialog = new GPXUploadDialog((File) adapterView.getItemAtPosition(i));
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
                         gpxUploadDialog.show(getActivity().getFragmentManager(), "hello");
                     }
                 });

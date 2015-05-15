@@ -18,17 +18,17 @@ import java.io.IOException;
 
 
 public class GPXUploadDialog extends DialogFragment {
-    private File gpxFile;
+    private GPXFile gpxFile;
 
-    public GPXUploadDialog(File gpxFile){
-        this.gpxFile = gpxFile;
+    public GPXUploadDialog(File file) throws FileNotFoundException {
+        this.gpxFile = new GPXFile(file);
     }
 
     private String getOauthToken(){
         return PreferenceManager.getDefaultSharedPreferences(this.getActivity()).getString("oauth_token", "");
     }
 
-    private File getUploadFile(){
+    private GPXFile getUploadFile() {
         return gpxFile;
     }
 
@@ -36,21 +36,23 @@ public class GPXUploadDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        builder.setMessage(R.string.post_activity)
+        builder.setTitle(R.string.post_activity)
+                .setSingleChoiceItems(GPXFile.SupportedActivities, 0, new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialogInterface, int i){
+                        getUploadFile().setActivityType(i);
+                    }
+                })
                 .setPositiveButton(R.string.post_activity, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         RunKeeperRequest runKeeperRequest = new RunKeeperRequest(getOauthToken(),
                                 getActivity().getApplicationContext());
 
                         try {
-                            GPXFile gpxFile = new GPXFile(getUploadFile().toString());
-                            String gpxJSON = gpxFile.toJSON();
+                            String gpxJSON = getUploadFile().toJSON();
                             runKeeperRequest.send(getActivity(), gpxJSON);
                         } catch (OAuthSystemException e) {
                             e.printStackTrace();
                         } catch (OAuthProblemException e) {
-                            e.printStackTrace();
-                        } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         } catch (XmlPullParserException e) {
                             e.printStackTrace();
@@ -64,6 +66,7 @@ public class GPXUploadDialog extends DialogFragment {
                         // User cancelled the dialog
                     }
                 });
+
         // Create the AlertDialog object and return it
         return builder.create();
     }

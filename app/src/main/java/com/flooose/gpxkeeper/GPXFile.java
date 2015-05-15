@@ -34,23 +34,32 @@ public class GPXFile {
     private static String TRACK_POINT = "trkpt";
 
     private static String GPX_DATE_FORMAT_STRING = "yyyy-MM-dd'T'H:m:s'Z'";
+    public static String[] SupportedActivities= new String[]{"Running", "Cycling"};
 
     private Date startTime = null;
     private FileInputStream gpxFileInputStream = null;
     private XmlPullParser parser = Xml.newPullParser();
     private JSONArray gpsPath = new JSONArray();
     private JSONObject gpsActivity = new JSONObject(); // actually a RunkeeperActivity
+    private String activity_type = "Running";
 
-    public GPXFile(String path) throws FileNotFoundException {
-        File gpxFile = new File(path);
-        gpxFileInputStream = new FileInputStream(gpxFile);
+    public GPXFile(File file) throws FileNotFoundException {
+        gpxFileInputStream = new FileInputStream(file);
+    }
+
+    public void setActivityType(int typeIndex){
+        activity_type = GPXFile.SupportedActivities[typeIndex];
+    }
+
+    private String getActivityType(){
+        return activity_type;
     }
 
     public String toJSON() throws IOException, XmlPullParserException {
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
         parser.setInput(gpxFileInputStream, null);
 
-        putJSONPayloadItem(GPXFile.TRACKING_POINT_TYPE, "Running");
+        putJSONPayloadItem(GPXFile.TRACKING_POINT_TYPE, getActivityType());
 
         try {
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {

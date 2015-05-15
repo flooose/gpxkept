@@ -34,6 +34,7 @@ public class GPXFiles {
                 return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
             }
         });
+
         return new ArrayList<File>(Arrays.asList(files));
     }
 }
