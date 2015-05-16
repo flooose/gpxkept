@@ -44,13 +44,11 @@ public class MainActivity extends ActionBarActivity {
     public static final String GPX_KEEPER_URI = "gpxkeeper://oauthresponse";
 
     private PlaceholderFragment placementholderFragment;
-    private String dataString = null;
     private GPXFiles gpxFiles = new GPXFiles(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dataString = PreferenceManager.getDefaultSharedPreferences(this).getString("oauth_token", null);
 
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
@@ -98,7 +96,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public String getOAuthToken() {
-        return dataString;
+        return PreferenceManager.getDefaultSharedPreferences(this).getString("oauth_token", null);
     }
 
     /**
@@ -227,6 +225,8 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onNewIntent(Intent intent){
         super.onNewIntent(intent);
+
+        String dataString = null;
         if (intent.getData() instanceof Uri) {
             dataString = intent.getData().getQueryParameter("code");
         }
@@ -285,7 +285,7 @@ public class MainActivity extends ActionBarActivity {
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
-            //textView.setText(result);
+            onResume();
         }
     }
 }
