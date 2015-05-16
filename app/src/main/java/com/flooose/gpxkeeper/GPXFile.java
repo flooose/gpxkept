@@ -40,7 +40,7 @@ public class GPXFile {
     private FileInputStream gpxFileInputStream = null;
     private XmlPullParser parser = Xml.newPullParser();
     private JSONArray gpsPath = new JSONArray();
-    private JSONObject gpsActivity = new JSONObject(); // actually a RunkeeperActivity
+    private JSONObject gpsActivity = new JSONObject();
     private String activity_type = "Running";
 
     public GPXFile(File file) throws FileNotFoundException {

@@ -44,34 +44,32 @@ public class MainActivity extends ActionBarActivity {
     public static final String GPX_KEEPER_URI = "gpxkeeper://oauthresponse";
 
     private PlaceholderFragment placementholderFragment;
-    private GPXFiles gpxFiles;
+    private String dataString = null;
+    private GPXFiles gpxFiles = new GPXFiles(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        gpxFiles = new GPXFiles(Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
-
-        GPXFilesAdapter fileArrayAdapter = new GPXFilesAdapter(this, gpxFiles.files());
-
-        placementholderFragment = new PlaceholderFragment(fileArrayAdapter);
         super.onCreate(savedInstanceState);
+        dataString = PreferenceManager.getDefaultSharedPreferences(this).getString("oauth_token", null);
+
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
+            placementholderFragment = new PlaceholderFragment(getGPXFilesAdapter());
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, placementholderFragment)
                     .commit();
         }
     }
 
+    private GPXFilesAdapter getGPXFilesAdapter(){
+        return new GPXFilesAdapter(this, gpxFiles.files());
+    }
+
     @Override
     protected void onResume(){
         super.onResume();
-        GPXFilesAdapter fileArrayAdapter = new GPXFilesAdapter(this, gpxFiles.files());
-
-        placementholderFragment.setFileArrayAdapter(fileArrayAdapter);
+        placementholderFragment.setFileArrayAdapter(getGPXFilesAdapter());
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,7 +94,11 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public boolean oAuthenticated() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getString("oauth_token", null) != null;
+        return getOAuthToken() != null;
+    }
+
+    public String getOAuthToken() {
+        return dataString;
     }
 
     /**
@@ -111,7 +113,9 @@ public class MainActivity extends ActionBarActivity {
         }
 
         public void setFileArrayAdapter(ArrayAdapter<File> fileArrayAdapter){
-            fileListView.setAdapter(fileArrayAdapter);
+            if (oAuthenticated()){
+                fileListView.setAdapter(fileArrayAdapter);
+            }
         }
 
         private void setButtonText(View rootView){
@@ -124,11 +128,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         public boolean oAuthenticated() {
-            return PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("oauth_token", null) != null;
-        }
-
-        private String getOauthToken(){
-            return PreferenceManager.getDefaultSharedPreferences(this.getActivity()).getString("oauth_token", "");
+            return ((MainActivity)getActivity()).getOAuthToken() != null;
         }
 
         @Override
@@ -140,8 +140,8 @@ public class MainActivity extends ActionBarActivity {
 
             //setButtonText(rootView);
 
+            fileListView = (ListView) rootView.findViewById(R.id.gpx_file_list_view);
             if(oAuthenticated()) {
-                fileListView = (ListView) rootView.findViewById(R.id.gpx_file_list_view);
                 fileListView.setAdapter(fileArrayAdapter);
                 fileListView.setOnItemClickListener(new ListView.OnItemClickListener(){
                     @Override
@@ -227,12 +227,11 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onNewIntent(Intent intent){
         super.onNewIntent(intent);
-        boolean authingApp = intent.getDataString() != null;
+        if (intent.getData() instanceof Uri) {
+            dataString = intent.getData().getQueryParameter("code");
+        }
 
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected() && authingApp) {
+        if (dataString != null) {
             new DownloadToken(intent).execute(MainActivity.AUTHORIZATION_URL);
         } else {
             //textView.setText("No network connection available.");
@@ -276,9 +275,7 @@ public class MainActivity extends ActionBarActivity {
     private class DownloadToken extends AsyncTask<String, Void, String> {
         private Intent intent;
         public DownloadToken(Intent intent){
-
             this.intent = intent;
-
         }
 
         @Override

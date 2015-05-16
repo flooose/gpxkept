@@ -75,6 +75,9 @@ public class RunKeeperRequest {
                 toastLength = Toast.LENGTH_LONG;
                 e.printStackTrace();
                 return e.getMessage();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return e.getMessage();
             }
         }
 
