@@ -8,7 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,9 +33,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.TimeZone;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends FragmentActivity {
 
     public static final String AUTHORIZATION_URL = "https://runkeeper.com/apps/authorize";
     public static final String TOKEN_URL = "https://runkeeper.com/apps/token";
@@ -52,7 +53,7 @@ public class MainActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
-            placementholderFragment = new PlaceholderFragment(getGPXFilesAdapter());
+            placementholderFragment = new PlaceholderFragment();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, placementholderFragment)
                     .commit();
@@ -61,12 +62,6 @@ public class MainActivity extends ActionBarActivity {
 
     private GPXFilesAdapter getGPXFilesAdapter(){
         return new GPXFilesAdapter(this, gpxFiles.files());
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        placementholderFragment.setFileArrayAdapter(getGPXFilesAdapter());
     }
 
     @Override
@@ -103,12 +98,9 @@ public class MainActivity extends ActionBarActivity {
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
-        private ArrayAdapter<File> fileArrayAdapter;
         private ListView fileListView;
 
-        public PlaceholderFragment(ArrayAdapter<File> fileArrayAdapter) {
-            this.fileArrayAdapter = fileArrayAdapter;
-        }
+        public PlaceholderFragment() {        }
 
         public void setFileArrayAdapter(ArrayAdapter<File> fileArrayAdapter){
             if (oAuthenticated()){
@@ -140,7 +132,7 @@ public class MainActivity extends ActionBarActivity {
 
             fileListView = (ListView) rootView.findViewById(R.id.gpx_file_list_view);
             if(oAuthenticated()) {
-                fileListView.setAdapter(fileArrayAdapter);
+                fileListView.setAdapter(((MainActivity)getActivity()).getGPXFilesAdapter());
                 fileListView.setOnItemClickListener(new ListView.OnItemClickListener(){
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -198,12 +190,12 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-     // Uses AsyncTask to create a task away from the main UI thread. This task takes a
-     // URL string and uses it to create an HttpUrlConnection. Once the connection
-     // has been established, the AsyncTask downloads the contents of the webpage as
-     // an InputStream. Finally, the InputStream is converted into a string, which is
-     // displayed in the UI by the AsyncTask's onPostExecute method.
-     private class DownloadWebpageTask extends AsyncTask<String, Void, String> {
+    // Uses AsyncTask to create a task away from the main UI thread. This task takes a
+    // URL string and uses it to create an HttpUrlConnection. Once the connection
+    // has been established, the AsyncTask downloads the contents of the webpage as
+    // an InputStream. Finally, the InputStream is converted into a string, which is
+    // displayed in the UI by the AsyncTask's onPostExecute method.
+    private class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
             try {
@@ -212,11 +204,12 @@ public class MainActivity extends ActionBarActivity {
                 return "Unable to retrieve web page. URL may be invalid.";
             }
         }
+
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
             //textView.setText(result);
-       }
+        }
     }
 
     @Override
@@ -282,7 +275,7 @@ public class MainActivity extends ActionBarActivity {
         protected String doInBackground(String... urls) {
             return validateToken(intent);
         }
-        // onPostExecute displays the results of the AsyncTask.
+
         @Override
         protected void onPostExecute(String result) {
             onResume();
