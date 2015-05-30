@@ -1,3 +1,4 @@
+# http://stackoverflow.com/questions/16736856/what-should-be-in-my-gitignore-for-an-android-studio-project
 .gradle
 /local.properties
 /.idea/workspace.xml
@@ -6,3 +7,9 @@
 /build
 GPXKeeperOAuthData.java
 samples/*
+*.iml
+.idea/*
+*.apk
+*.ap_
+*.class
+*.dex
