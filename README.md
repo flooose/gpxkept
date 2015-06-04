@@ -7,14 +7,13 @@ and two, I wanted to see if I could do it.
 
 All the application does is post the contents of GPX files created
 with [OSMTracker](https://code.google.com/p/osmtracker-android/) to
-the Runkeeper via the Runkeeper API.
+Runkeeper via the Runkeeper API.
 
 If you're interested in using this App (I can't imagine why). Install
 the app (see below), open it and click on the "Setup" button. After
 that, you have to setup your OSMTracker to export its GPX files to
 your Android™ device's `Download`s folder. After that, all `*.gpx`
-files will be listed when you open gpxkeeper. Long clicking on any
-entry posts it to Runkeeper.
+files will be listed when you open gpxkeeper.
 
 ## Development
 
