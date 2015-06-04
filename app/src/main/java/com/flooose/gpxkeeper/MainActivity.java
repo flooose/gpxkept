@@ -65,7 +65,7 @@ public class MainActivity extends FragmentActivity {
     public static final String DEBUG_TAG = "GPXKEEPER";
     public static final String GPX_KEEPER_URI = "gpxkeeper://oauthresponse";
 
-    private PlaceholderFragment placementholderFragment;
+    public PlaceholderFragment placeholderFragment;
     private GPXFiles gpxFiles = new GPXFiles(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
 
     @Override
@@ -74,9 +74,9 @@ public class MainActivity extends FragmentActivity {
 
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
-            placementholderFragment = new PlaceholderFragment();
+            placeholderFragment = new PlaceholderFragment();
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, placementholderFragment)
+                    .add(R.id.container, placeholderFragment)
                     .commit();
         }
     }
