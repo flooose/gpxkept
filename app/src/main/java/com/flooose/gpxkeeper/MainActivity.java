@@ -93,6 +93,12 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onResume(){
+        super.onResume();
+        placeholderFragment.setFileArrayAdapter(getGPXFilesAdapter());
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
