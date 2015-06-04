@@ -60,7 +60,7 @@ public class GPXFile {
     private XmlPullParser parser = Xml.newPullParser();
     private JSONArray gpsPath = new JSONArray();
     private JSONObject gpsActivity = new JSONObject();
-    private String activity_type = "Running";
+    private String activity_type = SupportedActivities[0];
 
     public GPXFile(File file) throws FileNotFoundException {
         gpxFileInputStream = new FileInputStream(file);
