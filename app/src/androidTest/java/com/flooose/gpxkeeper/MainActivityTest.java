@@ -1,6 +1,10 @@
 package com.flooose.gpxkeeper;
 
+import android.content.Intent;
+import android.test.ActivityUnitTestCase;
 import android.test.SingleLaunchActivityTestCase;
+import android.widget.ListView;
+
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import static org.mockito.Mockito.*;
@@ -15,28 +19,32 @@ import java.util.ArrayList;
  * Created by chris on 30.05.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class MainActivityTest extends SingleLaunchActivityTestCase {
-    public MainActivityTest(String pkg, Class activityClass) {
-        super(pkg, activityClass);
+public class MainActivityTest extends ActivityUnitTestCase<MainActivity> {
+    private MainActivity.PlaceholderFragment placeholderFragment;
+
+    public MainActivityTest() {
+        super(MainActivity.class);
     }
 
     @Override
-    public void setUp(){
-        int blub =4;
-   }
+    public void setUp() throws Exception {
+        super.setUp();
+        //placeholderFragment = mock(MainActivity.PlaceholderFragment.class);
+        //when(placeholderFragment.oAuthenticated()).thenReturn(Boolean.FALSE);
+        startActivity(new Intent(getInstrumentation().getTargetContext(), MainActivity.class), null, null);
+    }
 
     @Override
     public void tearDown(){
   }
 
     public void testResumeReloadsTheGPXFiles() throws Exception {
-        MainActivity.PlaceholderFragment placeholderFragment = mock(MainActivity.PlaceholderFragment.class);
-        //stub(placeholderFragment.setFileArrayAdapter(any(GPXFilesAdapter.class)));
+        MainActivity mainActivity = getActivity();
+        mainActivity.placeholderFragment.fileListView = new ListView(getInstrumentation().getContext());
+        placeholderFragment = spy(mainActivity.placeholderFragment);
 
-        ((MainActivity) getActivity()).onResume();
+        mainActivity.onResume();
 
-        assertEquals(1,2);
-
-        verify(placeholderFragment, atLeastOnce()).setFileArrayAdapter(any(GPXFilesAdapter.class));
+        verify(placeholderFragment).setFileArrayAdapter(any(GPXFilesAdapter.class));
     }
 }

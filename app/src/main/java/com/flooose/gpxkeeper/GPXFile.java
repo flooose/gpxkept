@@ -21,6 +21,10 @@ package com.flooose.gpxkeeper;
 
 import android.util.Xml;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParser;
@@ -55,7 +59,7 @@ public class GPXFile {
     private static String GPX_DATE_FORMAT_STRING = "yyyy-MM-dd'T'H:m:s'Z'";
     public static String[] SupportedActivities= new String[]{"Running", "Cycling"};
 
-    private Date startTime = null;
+    private DateTime startTime = null;
     private FileInputStream gpxFileInputStream = null;
     private XmlPullParser parser = Xml.newPullParser();
     private JSONArray gpsPath = new JSONArray();
@@ -115,12 +119,9 @@ public class GPXFile {
     }
 
     public void saveTrackingPointAsJSON(){
-        Date timestamp = null;
+        DateTime timestamp = null;
 
         JSONObject trackingPoint = new JSONObject();
-        if(startTime == null){
-
-        }
 
         for (int i = 0; i < parser.getAttributeCount(); i++) {
             try {
@@ -143,15 +144,14 @@ public class GPXFile {
                     trackingPoint.put(GPXFile.ELEVATION, parser.getText());
                 } else if ("time".equals(parser.getName()) && parser.getEventType() != parser.END_TAG){
                     while (parser.getEventType() != parser.TEXT) parser.next();
-                    try {
-                        timestamp = new SimpleDateFormat(GPX_DATE_FORMAT_STRING).parse(parser.getText());
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
+                    DateTimeFormatter dtf = DateTimeFormat.forPattern(GPX_DATE_FORMAT_STRING);
+                    timestamp = dtf.withZoneUTC().parseDateTime(parser.getText());
+
                     if(startTime == null){
-                        startTime = timestamp;
+                        startTime = timestamp.withZone(DateTimeZone.getDefault());
+
+                        gpsActivity.put(GPXFile.START_TIME, new SimpleDateFormat(DATE_FORMAT_STRING).format(startTime.getMillis()));
                     }
-                    gpsActivity.put(GPXFile.START_TIME, new SimpleDateFormat(DATE_FORMAT_STRING).format(startTime));
                 }
                 parser.next();
             }
@@ -163,7 +163,7 @@ public class GPXFile {
             e.printStackTrace();
         }
         try {
-            trackingPoint.put(GPXFile.TIMESTAMP, (timestamp.getTime() - startTime.getTime())/1000); // there should be a constant defined somewhere. Find it.
+            trackingPoint.put(GPXFile.TIMESTAMP, (timestamp.getMillis() - startTime.getMillis())/1000); // there should be a constant defined somewhere. Find it.
             trackingPoint.put(GPXFile.TRACKING_POINT_TYPE, "gps");
         } catch (JSONException e) {
             e.printStackTrace();

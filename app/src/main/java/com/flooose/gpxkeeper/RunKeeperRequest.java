@@ -70,6 +70,25 @@ public class RunKeeperRequest {
         } else { }
     }
 
+    public void deauthorize(Activity activity){
+        OAuthClientRequest bearerRequest = null;
+        try {
+            bearerRequest = new OAuthBearerClientRequest(RUNKEEPER_API_URL + "/apps/de-authorize")
+                    .setAccessToken(accessToken).buildQueryMessage();
+            bearerRequest.setHeader(OAuth.HeaderType.CONTENT_TYPE, "application/x-www-form-urlencoded");
+        } catch (OAuthSystemException e) {
+            e.printStackTrace();
+        }
+        ConnectivityManager connMgr = (ConnectivityManager)
+                activity.getSystemService(activity.getBaseContext().CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+            FetchContent fetcher =  new FetchContent(bearerRequest);
+            fetcher.execute(MainActivity.AUTHORIZATION_URL);
+        } else { }
+    }
+
     private class FetchContent extends AsyncTask<String, Void, String> {
         private OAuthClientRequest bearerRequest;
         private int toastLength = Toast.LENGTH_SHORT;

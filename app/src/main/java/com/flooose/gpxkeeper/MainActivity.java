@@ -29,7 +29,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -54,7 +53,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.TimeZone;
 
 
 public class MainActivity extends FragmentActivity {
@@ -125,7 +123,7 @@ public class MainActivity extends FragmentActivity {
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
-        private ListView fileListView;
+        public ListView fileListView;
 
         public PlaceholderFragment() {        }
 
@@ -190,7 +188,7 @@ public class MainActivity extends FragmentActivity {
                 //textView.setText("No network connection available.");
             }
         } else {
-
+            new RunKeeperRequest(PreferenceManager.getDefaultSharedPreferences(this).getString("oauth_token", null), this).deauthorize(this);
         }
     }
 
