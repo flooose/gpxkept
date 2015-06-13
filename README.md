@@ -19,7 +19,10 @@ files will be listed when you open gpxkeeper.
 
 If you're interested in developing this further (which would be even
 more surprising), follow the usual fork, patch, pull request
-procedure. See notes below.
+procedure. See notes below. If you're really feeling inspired, you
+could even swing by the
+[project's trello page](https://trello.com/b/SBmci3pO/gpxkept) and
+pick one of those tasks to finish :)
 
 ### `GPXKeeperOAuthData.java.example` ###
 
