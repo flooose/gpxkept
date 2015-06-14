@@ -27,19 +27,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
 
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
@@ -49,8 +41,6 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -64,7 +54,6 @@ public class MainActivity extends FragmentActivity {
     public static final String GPX_KEEPER_URI = "gpxkeeper://oauthresponse";
 
     public PlaceholderFragment placeholderFragment;
-    private GPXFiles gpxFiles = new GPXFiles(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,14 +62,10 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             placeholderFragment = new PlaceholderFragment();
-            getSupportFragmentManager().beginTransaction()
+            getFragmentManager().beginTransaction()
                     .add(R.id.container, placeholderFragment)
                     .commit();
         }
-    }
-
-    private GPXFilesAdapter getGPXFilesAdapter(){
-        return new GPXFilesAdapter(this, gpxFiles.files());
     }
 
     @Override
@@ -93,7 +78,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        placeholderFragment.setFileArrayAdapter(getGPXFilesAdapter());
+        placeholderFragment.setFileArrayAdapter();
     }
 
     @Override
@@ -117,62 +102,6 @@ public class MainActivity extends FragmentActivity {
 
     public String getOAuthToken() {
         return PreferenceManager.getDefaultSharedPreferences(this).getString("oauth_token", null);
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        public ListView fileListView;
-
-        public PlaceholderFragment() {        }
-
-        public void setFileArrayAdapter(ArrayAdapter<File> fileArrayAdapter){
-            if (oAuthenticated()){
-                fileListView.setAdapter(fileArrayAdapter);
-            }
-        }
-
-        private void setButtonText(View rootView){
-            Button button = (Button) rootView.findViewById(R.id.oAuthButton);
-            if(oAuthenticated()){
-                button.setText(R.string.deauthenticate);
-            } else {
-                button.setText(R.string.setup);
-            }
-        }
-
-        public boolean oAuthenticated() {
-            return ((MainActivity)getActivity()).getOAuthToken() != null;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater,
-                                 ViewGroup container,
-                                 Bundle savedInstanceState)
-        {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-            //setButtonText(rootView);
-
-            fileListView = (ListView) rootView.findViewById(R.id.gpx_file_list_view);
-            if(oAuthenticated()) {
-                fileListView.setAdapter(((MainActivity)getActivity()).getGPXFilesAdapter());
-                fileListView.setOnItemClickListener(new ListView.OnItemClickListener(){
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        GPXUploadDialog gpxUploadDialog = null;
-                        try {
-                            gpxUploadDialog = new GPXUploadDialog((File) adapterView.getItemAtPosition(i));
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                        gpxUploadDialog.show(getActivity().getFragmentManager(), "hello");
-                    }
-                });
-            }
-            return rootView;
-        }
     }
 
     // When user clicks button, calls AsyncTask.
