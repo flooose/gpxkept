@@ -59,20 +59,41 @@ public class FileListFragment extends Fragment {
 
         if(oAuthenticated()) {
             fileListView.setAdapter(getGPXFilesAdapter());
-            fileListView.setOnItemClickListener(new ListView.OnItemClickListener(){
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    GPXUploadDialog gpxUploadDialog = null;
-                    try {
-                        gpxUploadDialog = new GPXUploadDialog((File) adapterView.getItemAtPosition(i));
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    gpxUploadDialog.show(getActivity().getFragmentManager(), "hello");
-                }
-            });
+            setListItemClickListener();
+            setListItemLongClickListener();
         }
         return rootView;
+    }
+
+    private void setListItemLongClickListener() {
+        fileListView.setOnItemLongClickListener(new ListView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                GPXDetailDialog gpxDetailDialog = null;
+                try {
+                    gpxDetailDialog = new GPXDetailDialog((File) adapterView.getItemAtPosition(i));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                gpxDetailDialog.show(getActivity().getFragmentManager(), "hello");
+                return true;
+            }
+        });
+    }
+
+    private void setListItemClickListener(){
+        fileListView.setOnItemClickListener(new ListView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                GPXUploadDialog gpxUploadDialog = null;
+                try {
+                    gpxUploadDialog = new GPXUploadDialog((File) adapterView.getItemAtPosition(i));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                gpxUploadDialog.show(getActivity().getFragmentManager(), "hello");
+            }
+        });
     }
 
 }

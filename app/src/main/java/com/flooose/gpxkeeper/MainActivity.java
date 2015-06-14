@@ -19,6 +19,7 @@
 
 package com.flooose.gpxkeeper;
 
+import android.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 
 import android.content.Intent;
@@ -46,7 +47,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements GPXDetailDialog.GPXDetailDialogListener {
 
     public static final String AUTHORIZATION_URL = "https://runkeeper.com/apps/authorize";
     public static final String TOKEN_URL = "https://runkeeper.com/apps/token";
@@ -235,6 +236,12 @@ public class MainActivity extends FragmentActivity {
         protected void onPostExecute(String result) {
             onResume();
         }
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog){
+        ((GPXDetailDialog) dialog).gpxFile.delete();
+        fileListFragment.setFileArrayAdapter();
     }
 }
 
