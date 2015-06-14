@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -17,12 +16,12 @@ import java.io.FileNotFoundException;
 /**
  * Created by chris on 13.06.15.
  */
-public class PlaceholderFragment extends Fragment {
+public class FileListFragment extends Fragment {
     public ListView fileListView;
     private GPXFiles gpxFiles = new GPXFiles(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
 
 
-    public PlaceholderFragment() {        }
+    public FileListFragment() {        }
 
     public GPXFilesAdapter getGPXFilesAdapter(){
         return new GPXFilesAdapter(getActivity(), gpxFiles.files());

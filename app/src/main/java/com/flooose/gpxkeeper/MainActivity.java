@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+// All of this should be in its own object
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
@@ -53,7 +54,7 @@ public class MainActivity extends FragmentActivity {
     public static final String DEBUG_TAG = "GPXKEEPER";
     public static final String GPX_KEEPER_URI = "gpxkeeper://oauthresponse";
 
-    public PlaceholderFragment placeholderFragment;
+    public FileListFragment fileListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +62,9 @@ public class MainActivity extends FragmentActivity {
 
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
-            placeholderFragment = new PlaceholderFragment();
+            fileListFragment = new FileListFragment();
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, placeholderFragment)
+                    .add(R.id.container, fileListFragment)
                     .commit();
         }
     }
@@ -78,7 +79,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        placeholderFragment.setFileArrayAdapter();
+        fileListFragment.setFileArrayAdapter();
     }
 
     @Override
