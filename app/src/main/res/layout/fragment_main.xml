@@ -13,9 +13,17 @@
         android:layout_height="wrap_content"
         android:text="@string/setup"
         android:onClick="oAuthAction"/>
+
+    <Button
+        android:id="@+id/newActivity"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="New Activity"
+        android:onClick="newActivity" />
+
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="196dp"
         android:id="@+id/gpx_file_list_view"
         android:textSize="20sp"/>
 

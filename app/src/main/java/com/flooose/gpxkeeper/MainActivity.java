@@ -20,6 +20,9 @@
 package com.flooose.gpxkeeper;
 
 import android.app.DialogFragment;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 
 import android.content.Intent;
@@ -33,6 +36,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 // All of this should be in its own object
 import org.apache.oltu.oauth2.client.OAuthClient;
@@ -56,6 +60,8 @@ public class MainActivity extends FragmentActivity implements GPXDetailDialog.GP
     public static final String GPX_KEEPER_URI = "gpxkeeper://oauthresponse";
 
     public FileListFragment fileListFragment;
+    private boolean recording = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +84,7 @@ public class MainActivity extends FragmentActivity implements GPXDetailDialog.GP
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         fileListFragment.setFileArrayAdapter();
     }
@@ -104,6 +110,11 @@ public class MainActivity extends FragmentActivity implements GPXDetailDialog.GP
 
     public String getOAuthToken() {
         return PreferenceManager.getDefaultSharedPreferences(this).getString("oauth_token", null);
+    }
+
+    public void newActivity(View view) {
+        Intent intent = new Intent(this, RunningActivity.class);
+        startActivity(intent);
     }
 
     // When user clicks button, calls AsyncTask.
@@ -169,10 +180,11 @@ public class MainActivity extends FragmentActivity implements GPXDetailDialog.GP
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int responseCode, Intent intent){}
+    protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
+    }
 
     @Override
-    protected void onNewIntent(Intent intent){
+    protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
         String dataString = null;
@@ -223,7 +235,8 @@ public class MainActivity extends FragmentActivity implements GPXDetailDialog.GP
 
     private class DownloadToken extends AsyncTask<String, Void, String> {
         private Intent intent;
-        public DownloadToken(Intent intent){
+
+        public DownloadToken(Intent intent) {
             this.intent = intent;
         }
 
@@ -239,7 +252,7 @@ public class MainActivity extends FragmentActivity implements GPXDetailDialog.GP
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog){
+    public void onDialogPositiveClick(DialogFragment dialog) {
         ((GPXDetailDialog) dialog).gpxFile.delete();
         fileListFragment.setFileArrayAdapter();
     }

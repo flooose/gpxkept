@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class MainActivityTest extends ActivityUnitTestCase<MainActivity> {
-    private FileListFragment fileListFragmentl;
+    private FileListFragment fileListFragment;
 
     public MainActivityTest() {
         super(MainActivity.class);

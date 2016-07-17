@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_running"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.flooose.gpxkeeper.RunningActivity">
+
+    <org.osmdroid.views.MapView android:id="@+id/map"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_running"
+        app:layout_constraintRight_toRightOf="@+id/activity_running"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_running"
+        app:layout_constraintTop_toTopOf="@+id/activity_running"
+
+
+        />
+
+    <Button
+        android:text="@string/start"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/start_stop"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_running"
+        android:layout_marginStart="16dp"
+        app:layout_constraintRight_toRightOf="@+id/activity_running"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_running"
+        android:layout_marginBottom="16dp"
+        android:onClick="startNewTrack" />
+</android.support.constraint.ConstraintLayout>
