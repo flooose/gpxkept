@@ -1,18 +1,15 @@
 package com.flooose.gpxkeeper;
 
-import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 
 import com.flooose.gpxkeeper.TrackedActivity.AsyncRoadRetriever;
 
 import org.osmdroid.api.IMapController;
-import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -20,13 +17,11 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 public class RunningActivity extends FragmentActivity {
 
-    private boolean recording = false;
-    private GPXKeeperLocationListener ll = new GPXKeeperLocationListener();
+    private boolean mRecording = false;
+    private GPXKeeperLocationListener gpxKeeperLocationListener = new GPXKeeperLocationListener();
     private LocationManager mLocationManager;
     private MapView mMap;
 
@@ -37,7 +32,7 @@ public class RunningActivity extends FragmentActivity {
 
         mLocationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
         // Must be done in order to avoid mLocationManater#getLastKnownLocation returning null
-        mLocationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, ll, null);
+        mLocationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, gpxKeeperLocationListener, null);
         Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         mMap = (MapView) findViewById(R.id.map);
@@ -60,21 +55,21 @@ public class RunningActivity extends FragmentActivity {
 
     public void startNewTrack(View view) {
         Button button = (Button) view;
-        recording = !recording;
-        LocationManager lm = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+        mRecording = !mRecording;
+        LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
 
         //LocationRequest mLocationRequest = new LocationRequest();
 
-        if (recording) {
+        if (mRecording) {
             button.setText(getString(R.string.stop));
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, ll);
-//            Location l = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, gpxKeeperLocationListener);
+//            Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         } else {
             button.setText(getString(R.string.start));
 
-            new AsyncRoadRetriever(this).execute(ll.getWaypoints(), null, null);
+            new AsyncRoadRetriever(this).execute(gpxKeeperLocationListener.getWaypoints(), null, null);
 
-            lm.removeUpdates(ll);
+            locationManager.removeUpdates(gpxKeeperLocationListener);
         }
     }
 
