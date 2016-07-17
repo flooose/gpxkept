@@ -13,13 +13,9 @@ import java.util.ArrayList;
  */
 public class GPXKeeperLocationListener implements LocationListener {
     private ArrayList<GeoPoint> mWaypoints;
-    int blub = 1;
 
     public GPXKeeperLocationListener() {
         mWaypoints = new ArrayList<>();
-        //waypoints.add(startPoint);
-        //GeoPoint endPoint = new GeoPoint(48.4, -1.9);
-        //mWaypoints.add(endPoint);
     }
 
     public ArrayList<GeoPoint> getWaypoints() {
@@ -29,22 +25,15 @@ public class GPXKeeperLocationListener implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         mWaypoints.add(new GeoPoint(location.getLatitude(), location.getLongitude()));
-        blub += 1;
     }
 
     @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-        int blub = 1;
-    }
+    public void onStatusChanged(String s, int i, Bundle bundle) {}
 
     @Override
-    public void onProviderEnabled(String s) {
-        int blub = 1;
-    }
+    public void onProviderEnabled(String s) {}
 
     @Override
-    public void onProviderDisabled(String s) {
-        int blub = 1;
-    }
+    public void onProviderDisabled(String s) {}
 
 }

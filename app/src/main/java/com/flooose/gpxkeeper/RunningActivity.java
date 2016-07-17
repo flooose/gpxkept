@@ -21,7 +21,7 @@ import org.osmdroid.views.overlay.Polyline;
 public class RunningActivity extends FragmentActivity {
 
     private boolean mRecording = false;
-    private GPXKeeperLocationListener gpxKeeperLocationListener = new GPXKeeperLocationListener();
+    private GPXKeeperLocationListener gpxKeeperLocationListener;
     private LocationManager mLocationManager;
     private MapView mMap;
 
@@ -55,21 +55,23 @@ public class RunningActivity extends FragmentActivity {
 
     public void startNewTrack(View view) {
         Button button = (Button) view;
-        mRecording = !mRecording;
         LocationManager locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
 
         //LocationRequest mLocationRequest = new LocationRequest();
 
         if (mRecording) {
-            button.setText(getString(R.string.stop));
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, gpxKeeperLocationListener);
-//            Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        } else {
+            mRecording = false;
             button.setText(getString(R.string.start));
 
             new AsyncRoadRetriever(this).execute(gpxKeeperLocationListener.getWaypoints(), null, null);
 
             locationManager.removeUpdates(gpxKeeperLocationListener);
+        } else {
+            mRecording = true;
+            gpxKeeperLocationListener = new GPXKeeperLocationListener();
+            button.setText(getString(R.string.stop));
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, gpxKeeperLocationListener);
+//            Location l = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
     }
 
