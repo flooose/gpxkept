@@ -60,8 +60,6 @@ public class MainActivity extends FragmentActivity implements GPXDetailDialog.GP
     public static final String GPX_KEEPER_URI = "gpxkeeper://oauthresponse";
 
     public FileListFragment fileListFragment;
-    private boolean recording = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

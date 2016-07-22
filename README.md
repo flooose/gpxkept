@@ -92,7 +92,7 @@ Date format string: `EEE, d MMM yyyy H:m:s` used in `DATE_FORMAT_STRING`.
             ]
     }
 
-The `timestamp` field must be number of seconds `start_time`.
+The `timestamp` field must be number of seconds after `start_time`.
 
 ## Installation
 

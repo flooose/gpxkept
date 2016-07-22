@@ -4,6 +4,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 
+import com.flooose.gpxkeeper.TrackedActivity.RunKeeperGPXPoints;
+import com.flooose.gpxkeeper.TrackedActivity.models.RunKeeperGPXPoint;
+
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
@@ -13,8 +16,10 @@ import java.util.ArrayList;
  */
 public class GPXKeeperLocationListener implements LocationListener {
     private ArrayList<GeoPoint> mWaypoints;
+    private RunKeeperGPXPoints runKeeperGPXPoints;
 
     public GPXKeeperLocationListener() {
+        runKeeperGPXPoints = new ArrayList<>();
         mWaypoints = new ArrayList<>();
     }
 
@@ -24,6 +29,13 @@ public class GPXKeeperLocationListener implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
+        RunKeeperGPXPoint runKeeperGPXPoint = new RunKeeperGPXPoint(
+                (int) location.getElapsedRealtimeNanos() / 1000,
+                "" + location.getLatitude(),
+                "" + location.getLongitude(),
+                "" + location.getAltitude()
+        );
+        runKeeperGPXPoints.add(runKeeperGPXPoint);
         mWaypoints.add(new GeoPoint(location.getLatitude(), location.getLongitude()));
     }
 
